@@ -9,7 +9,7 @@ namespace EDStatistics
     {
         public static PColor[] DefaultColorMapping = new[]
         {
-            new PColor(0, 5, 5),
+            new PColor(0, 0, 0),
             new PColor(0, 150, 255),
             new PColor(0, 255, 0),
             new PColor(255, 255, 0),
@@ -26,7 +26,6 @@ namespace EDStatistics
             var image = new PSprite(width, height);
 
             image.Art.Background(PColor.Black);
-            var pixels = image.Art.GetPixels();
 
             var systemCount = (new FileInfo(binPath)).Length / Converter.systemByteSize;
             var systemBufferSizeTarget = 500000;
@@ -36,6 +35,7 @@ namespace EDStatistics
 
             var density = new int[width, height];
             var maxDensity = 0;
+            var qualityReduction = 10000; // Minimum: 1
 
             using (var fileStream = new FileStream(binPath, FileMode.Open, FileAccess.Read))
             {
@@ -47,7 +47,7 @@ namespace EDStatistics
                     var buffer = new byte[systemsToRead * Converter.systemByteSize];
                     fileStream.Read(buffer, 0, (int)systemsToRead * Converter.systemByteSize);
 
-                    for (var i = 0; i < systemsToRead; i++)
+                    for (var i = 0; i < systemsToRead; i += qualityReduction)
                     {
                         var index = (i * Converter.systemByteSize) + sizeof(long);
                         var x = BitConverter.ToDouble(buffer, index); index += sizeof(double);
@@ -60,7 +60,7 @@ namespace EDStatistics
                         var pY = (int)Math.Floor(((z - port.Top) / bt) * height);
 
                         if (pX < 0 || pX >= width || pY < 0 || pY >= height) { continue; }
-                        density[pX, pY]++;
+                        density[pX, pY] += qualityReduction;
                         if (density[pX, pY] > maxDensity) { maxDensity = density[pX, pY]; }
                     }
                     buffer = null;
@@ -71,6 +71,7 @@ namespace EDStatistics
             //var den = (double)maxDensity;
             currentMaxDensity = den;
 
+            var pixels = image.Art.GetPixels();
             for (var y = 0; y < height; y++)
             {
                 for (var x = 0; x < width; x++)
@@ -93,5 +94,10 @@ namespace EDStatistics
 
             return image;
         }
+
+        //public (int, int) CoordinateToScreenSpace(float x, float y, float y)
+        //{
+
+        //}
     }
 }
