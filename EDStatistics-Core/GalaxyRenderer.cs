@@ -62,15 +62,6 @@ namespace EDStatistics_Core
             density_shader.Dispose();
             maxDensity_shader.Dispose();
 
-            //for (var i = 0; i < coordinates.Length / 3; i++)
-            //{
-            //    var pX = (int)Math.Floor(((coordinates[i * 3] - left) / (right - left)) * width);
-            //    var pY = (int)Math.Floor(((coordinates[(i * 3) + 2] - top) / (bottom - top)) * height);
-            //    if (pX < 0 || pX >= width || pY < 0 || pY >= height) { continue; }
-            //    density[pX, pY]++;
-            //    if (density[pX, pY] > maxDensity) { maxDensity = density[pX, pY]; }
-            //}
-
             var den = previousMaxDensity ?? maxDensity;
             currentMaxDensity = den;
 
