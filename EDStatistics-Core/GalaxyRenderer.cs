@@ -65,20 +65,20 @@ namespace EDStatistics_Core
             var den = previousMaxDensity ?? maxDensity;
             currentMaxDensity = den;
 
-            var pixels = image.Art.GetPixels();
-            for (var i = 0; i < density.Length; i++)
-            {
-                if (density[i] == 0) { continue; }
-                var address = i * 4;
-                var colorPercent = density[i] / den;
-                colorPercent = smoothing(colorPercent);
-                var color = PColor.LerpMultiple(colorMap, (float)(colorPercent > 1 ? 1 : colorPercent));
-                pixels[address + 0] = (byte)color.B;
-                pixels[address + 1] = (byte)color.G;
-                pixels[address + 2] = (byte)color.R;
-                pixels[address + 3] = 255;
-            }
-            image.Art.SetPixels(pixels);
+            //var pixels = image.Art.GetPixels();
+            //for (var i = 0; i < density.Length; i++)
+            //{
+            //    if (density[i] == 0) { continue; }
+            //    var address = i * 4;
+            //    var colorPercent = density[i] / den;
+            //    colorPercent = smoothing(colorPercent);
+            //    var color = PColor.LerpMultiple(colorMap, (float)(colorPercent > 1 ? 1 : colorPercent));
+            //    pixels[address + 0] = (byte)color.B;
+            //    pixels[address + 1] = (byte)color.G;
+            //    pixels[address + 2] = (byte)color.R;
+            //    pixels[address + 3] = 255;
+            //}
+            //image.Art.SetPixels(pixels);
 
             return image;
         }
