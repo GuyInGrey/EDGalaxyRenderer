@@ -81,7 +81,7 @@ namespace EDStatistics_Core
                     i == 0 ? (double?)null : previousMaxDensity, out previousMaxDensity,
                     ref coordinatesBuffer);
                 //image.Save(@"frames\" + i.ToString("000000") + ".png");
-                image.Dispose();
+                //image.Dispose();
                 progress++;
 
                 #region Logging progress per frame

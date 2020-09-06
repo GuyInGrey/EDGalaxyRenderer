@@ -24,8 +24,8 @@ namespace EDStatistics_Core
             PColor[] colorMap, Func<double, double> smoothing, double? previousMaxDensity, out double currentMaxDensity,
             ref ReadOnlyBuffer<double> coordinates)
         {
-            var image = new PSprite(width, height);
-            image.Art.Background(PColor.Black);
+            //var image = new PSprite(width, height);
+            //image.Art.Background(PColor.Black);
 
             var systemCount = coordinates.Size / 3;
 
@@ -40,7 +40,7 @@ namespace EDStatistics_Core
             var density_shader = Gpu.Default.AllocateReadWriteBuffer<int>(width * height);
             var maxDensity_shader = Gpu.Default.AllocateReadWriteBuffer<int>(1);
 
-            var dispatchSize = 128;
+            var dispatchSize = 4096;
 
             var shader = new SystemsCalculationShader(
                 coordinates,
@@ -80,7 +80,8 @@ namespace EDStatistics_Core
             //}
             //image.Art.SetPixels(pixels);
 
-            return image;
+            //return image;
+            return null;
         }
     }
 }
