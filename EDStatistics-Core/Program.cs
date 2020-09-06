@@ -58,11 +58,11 @@ namespace EDStatistics_Core
             var galMax = new Coordinates(40503.81f, 39518.34f, 65630.16f);
 
             // For animating the frames, I lerp between viewpoints for each frame. These are the 2 keys that the lerping follows.
-            var from = new Viewport(galMin.z, galMax.z, galMax.x, galMin.x);
+            var from = new Viewport(galMax.z, galMin.z, galMax.x, galMin.x);
             var to = new Viewport(10, -10, 10, -10);
 
             /// This just determines how many frames to render.
-            var timeToTake = 30; // seconds
+            var timeToTake = 5; // seconds
             var frameRate = 60;
 
             var progress = 0;
@@ -80,12 +80,11 @@ namespace EDStatistics_Core
                     GalaxyRenderer.DefaultSmoothing,
                     i == 0 ? (double?)null : previousMaxDensity, out previousMaxDensity,
                     ref coordinatesBuffer);
-                //image.Save(@"frames\" + i.ToString("000000") + ".png");
-                //image.Dispose();
+                image.Save(@"frames\" + i.ToString("000000") + ".png");
+                image.Dispose();
                 progress++;
 
                 #region Logging progress per frame
-                Console.Clear();
                 Console.WriteLine(progress + " / " + (frameRate * timeToTake) + "  -  " + ((progress * 100) / (double)(frameRate * timeToTake)).ToString("0.00") + "%");
 
                 var secondsPerFrame = (double)watch.Elapsed.TotalSeconds / progress;
@@ -98,6 +97,18 @@ namespace EDStatistics_Core
                 Console.WriteLine("Average time per frame: " + secondsPerFrame.ToString("0.00") + " seconds.");
                 #endregion
             }
+
+            Console.WriteLine("Frame rendering complete. Compiling video...");
+            var info = new ProcessStartInfo()
+            {
+                FileName = "ffmpeg",
+                Arguments = string.Format(" -framerate {0} -i %06d.png -c:v libx264 -r {0} {1}.mp4", frameRate, "out"),
+                WorkingDirectory = "frames",
+            };
+            var p = Process.Start(info);
+            p.WaitForExit();
+            Console.WriteLine("Finished. Saved video as out.mp4.");
+            Console.Read();
         }
 
         static double Sigmoid(double t) => 1f / (1f + Math.Pow(2.71828d, -t));

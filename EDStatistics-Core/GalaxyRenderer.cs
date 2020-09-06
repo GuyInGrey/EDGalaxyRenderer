@@ -24,8 +24,8 @@ namespace EDStatistics_Core
             PColor[] colorMap, Func<double, double> smoothing, double? previousMaxDensity, out double currentMaxDensity,
             ref ReadOnlyBuffer<double> coordinates)
         {
-            //var image = new PSprite(width, height);
-            //image.Art.Background(PColor.Black);
+            var image = new PSprite(width, height);
+            image.Art.Background(PColor.Black);
 
             var systemCount = coordinates.Size / 3;
 
@@ -37,10 +37,10 @@ namespace EDStatistics_Core
             var right = port.Right;
             var left = port.Left;
 
+            var dispatchSize = 4096;
+
             var density_shader = Gpu.Default.AllocateReadWriteBuffer<int>(width * height);
             var maxDensity_shader = Gpu.Default.AllocateReadWriteBuffer<int>(1);
-
-            var dispatchSize = 4096;
 
             var shader = new SystemsCalculationShader(
                 coordinates,
@@ -65,22 +65,22 @@ namespace EDStatistics_Core
             var den = previousMaxDensity ?? maxDensity;
             currentMaxDensity = den;
 
-            //var pixels = image.Art.GetPixels();
-            //for (var i = 0; i < density.Length; i++)
-            //{
-            //    if (density[i] == 0) { continue; }
-            //    var address = i * 4;
-            //    var colorPercent = density[i] / den;
-            //    colorPercent = smoothing(colorPercent);
-            //    var color = PColor.LerpMultiple(colorMap, (float)(colorPercent > 1 ? 1 : colorPercent));
-            //    pixels[address + 0] = (byte)color.B;
-            //    pixels[address + 1] = (byte)color.G;
-            //    pixels[address + 2] = (byte)color.R;
-            //    pixels[address + 3] = 255;
-            //}
-            //image.Art.SetPixels(pixels);
+            var pixels = image.Art.GetPixels();
+            for (var i = 0; i < density.Length; i++)
+            {
+                if (density[i] == 0) { continue; }
+                var address = i * 4;
+                var colorPercent = density[i] / den;
+                colorPercent = smoothing(colorPercent);
+                var color = PColor.LerpMultiple(colorMap, (float)(colorPercent > 1 ? 1 : colorPercent));
+                pixels[address + 0] = (byte)color.B;
+                pixels[address + 1] = (byte)color.G;
+                pixels[address + 2] = (byte)color.R;
+                pixels[address + 3] = 255;
+            }
+            image.Art.SetPixels(pixels);
 
-            //return image;
+            return image;
             return null;
         }
     }
