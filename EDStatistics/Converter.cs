@@ -7,13 +7,15 @@ namespace EDStatistics
 {
     public static class Converter
     {
+        public static int systemByteSize => sizeof(long) + (3 * sizeof(double)) + 50;
+
         public static void ConvertExplorationData(string from, string to)
         {
             var count = 0;
             if (File.Exists(to)) { File.Delete(to); }
             using (File.Create(to)) { }
 
-            var bufferSize = 50000 * 70;
+            var bufferSize = 50000 * systemByteSize;
 
             var buffer = new byte[bufferSize];
             var bufferIndex = 0;
@@ -27,7 +29,7 @@ namespace EDStatistics
                 while ((line = streamReader.ReadLine()) != null)
                 {
                     count++;
-                    if (count % 500000 == 0) { Console.WriteLine("Loading star systems, please wait...  " + count + "  (" + ((count / 54000000f) * 100f).ToString("0.00") + "%)"); }
+                    if (count % 500000 == 0) { Console.WriteLine("Converting star system format...  " + count + "  (" + ((count / 54000000d) * 100d).ToString("0.00") + "%)"); }
 
                     line = line.Trim();
                     if (line.Length < 3) { continue; }
@@ -39,9 +41,9 @@ namespace EDStatistics
                     if (s is null) { continue; }
 
                     Array.Copy(BitConverter.GetBytes(s.id64), 0, buffer, bufferIndex, sizeof(long)); bufferIndex += sizeof(long);
-                    Array.Copy(BitConverter.GetBytes(s.coords.x), 0, buffer, bufferIndex, sizeof(float)); bufferIndex += sizeof(float);
-                    Array.Copy(BitConverter.GetBytes(s.coords.y), 0, buffer, bufferIndex, sizeof(float)); bufferIndex += sizeof(float);
-                    Array.Copy(BitConverter.GetBytes(s.coords.z), 0, buffer, bufferIndex, sizeof(float)); bufferIndex += sizeof(float);
+                    Array.Copy(BitConverter.GetBytes(s.coords.x), 0, buffer, bufferIndex, sizeof(double)); bufferIndex += sizeof(double);
+                    Array.Copy(BitConverter.GetBytes(s.coords.y), 0, buffer, bufferIndex, sizeof(double)); bufferIndex += sizeof(double);
+                    Array.Copy(BitConverter.GetBytes(s.coords.z), 0, buffer, bufferIndex, sizeof(double)); bufferIndex += sizeof(double);
                     Array.Copy(Encoding.ASCII.GetBytes(s.name.PadRight(50, ' ')), 0, buffer, bufferIndex, 50); bufferIndex += 50;
 
                     if (bufferIndex >= buffer.Length)

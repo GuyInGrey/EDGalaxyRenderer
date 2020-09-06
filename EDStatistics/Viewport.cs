@@ -5,20 +5,22 @@ namespace EDStatistics
 {
     public class Viewport
     {
-        public float Top;
-        public float Bottom;
-        public float Left;
-        public float Right;
+        public double Top;
+        public double Bottom;
+        public double Left;
+        public double Right;
 
-        public static Viewport Lerp(Viewport a, Viewport b, float t)
+        public static Viewport Lerp(Viewport a, Viewport b, double t)
         {
             return new Viewport()
             {
-                Top = PMath.Lerp(a.Top, b.Top, t),
-                Bottom = PMath.Lerp(a.Bottom, b.Bottom, t),
-                Left = PMath.Lerp(a.Left, b.Left, t),
-                Right = PMath.Lerp(a.Right, b.Right, t),
+                Top = Lerp(a.Top, b.Top, t),
+                Bottom = Lerp(a.Bottom, b.Bottom, t),
+                Left = Lerp(a.Left, b.Left, t),
+                Right = Lerp(a.Right, b.Right, t),
             }; 
         }
+        public static double Lerp(double a, double b, double t) =>
+            a * (1 - t) + b * t;
     }
 }

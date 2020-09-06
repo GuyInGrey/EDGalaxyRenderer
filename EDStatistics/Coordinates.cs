@@ -5,13 +5,13 @@ namespace EDStatistics
     [Serializable]
     public class Coordinates
     {
-        public float x;
-        public float y;
-        public float z;
+        public double x;
+        public double y;
+        public double z;
 
         public Coordinates() { }
-        public Coordinates(float x, float y, float z) { this.x = x; this.y = y; this.z = z; }
-        public Coordinates(float x, float y) : this(x, y, 0) { }
+        public Coordinates(double x, double y, double z) { this.x = x; this.y = y; this.z = z; }
+        public Coordinates(double x, double y) : this(x, y, 0) { }
 
         public override string ToString()
         {
