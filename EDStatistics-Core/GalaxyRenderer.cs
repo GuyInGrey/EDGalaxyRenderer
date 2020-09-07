@@ -53,7 +53,7 @@ namespace EDStatistics_Core
                 port.Left,
                 port.Right,
                 dispatchSize,
-                coordinates.Size);
+            coordinates.Size);
 
             Gpu.Default.For((coordinates.Size / 3) / dispatchSize, shader);
             density = density_shader.GetData();
@@ -77,7 +77,7 @@ namespace EDStatistics_Core
             //}
 
             var pixels_shader = Gpu.Default.AllocateReadWriteBuffer<int>(width * height * 4);
-            var shader2 = new HeatmapImageGenerationShader(density_shader, pixels_shader, width, maxDensity);
+            var shader2 = new HeatmapImageGenerationShader(density_shader, pixels_shader, width, den);
             Gpu.Default.For(height, shader2);
             image.Art.SetPixels(pixels_shader.GetData().Select(i => (byte)i).ToArray());
 

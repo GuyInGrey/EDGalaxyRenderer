@@ -32,9 +32,9 @@ namespace EDStatistics_Core
                 var value = density[x + (y * width)] / (float)maxDensity;
                 if (value > 1f) { value = 1f; }
                 if (value < 0f) { value = 0f; }
-                //var v = value - 1;
-                //value = Hlsl.Pow(v, 24);
-                //value = -value + 1;
+                var v = value - 1;
+                value = v * v * v * v * v * v * v * v * v * v * v * v * v * v * v * v * v * v * v * v * v * v * v * v;
+                value = -value + 1;
                 //value = -(Hlsl.Pow(-value, 2)) + 1; //    THIS LINE
                 image[j] = image[j + 1] = image[j + 2] = (int)(value * 255);
                 image[j + 3] = 255;
