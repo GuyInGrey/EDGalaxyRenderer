@@ -59,27 +59,31 @@ namespace EDStatistics_Core
             density = density_shader.GetData();
             maxDensity = maxDensity_shader.GetData()[0];
 
-            density_shader.Dispose();
-            maxDensity_shader.Dispose();
-
             var den = previousMaxDensity ?? maxDensity;
             currentMaxDensity = den;
 
-            var pixels = image.Art.GetPixels();
-            for (var i = 0; i < density.Length; i++)
-            {
-                if (density[i] == 0) { continue; }
-                var address = i * 4;
-                var colorPercent = density[i] / den;
-                colorPercent = smoothing(colorPercent);
-                var color = PColor.LerpMultiple(colorMap, (float)(colorPercent > 1 ? 1 : colorPercent));
-                pixels[address + 0] = (byte)color.B;
-                pixels[address + 1] = (byte)color.G;
-                pixels[address + 2] = (byte)color.R;
-                pixels[address + 3] = 255;
-            }
-            image.Art.SetPixels(pixels);
+            //var pixels = image.Art.GetPixels();
+            //for (var i = 0; i < density.Length; i++)
+            //{
+            //    if (density[i] == 0) { continue; }
+            //    var address = i * 4;
+            //    var colorPercent = density[i] / den;
+            //    colorPercent = smoothing(colorPercent);
+            //    var color = PColor.LerpMultiple(colorMap, (float)(colorPercent));
+            //    pixels[address + 0] = (byte)color.B;
+            //    pixels[address + 1] = (byte)color.G;
+            //    pixels[address + 2] = (byte)color.R;
+            //    pixels[address + 3] = 255;
+            //}
 
+            var pixels_shader = Gpu.Default.AllocateReadWriteBuffer<int>(width * height * 4);
+            var shader2 = new HeatmapImageGenerationShader(density_shader, pixels_shader, width, maxDensity);
+            Gpu.Default.For(height, shader2);
+            image.Art.SetPixels(pixels_shader.GetData().Select(i => (byte)i).ToArray());
+
+            pixels_shader.Dispose();
+            density_shader.Dispose();
+            maxDensity_shader.Dispose();
             return image;
             return null;
         }

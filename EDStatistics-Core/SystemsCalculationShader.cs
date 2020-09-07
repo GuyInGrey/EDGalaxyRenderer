@@ -29,8 +29,7 @@ namespace EDStatistics_Core
                 double right,
                 int iterations,
                 int coordinatesSize
-            )
-        {
+        ) {
             this.coordinates = coordinates;
             this.density = density;
             this.width = width;
@@ -53,12 +52,13 @@ namespace EDStatistics_Core
                 if (i * 3 >= coordinatesSize) { return; }
                 var pX = (int)Hlsl.Floor((float)((coordinates[i * 3] - left) / (right - left)) * width);
                 var pY = (int)Hlsl.Floor((float)((coordinates[(i * 3) + 2] - top) / (bottom - top)) * height);
-                if (pX < 0 || pX >= width || pY < 0 || pY >= height) { return; }
+                if (pX < 0 || pX >= width || pY < 0 || pY >= height) { continue; }
                 var denIndex = pX + (pY * width);
                 density[denIndex]++;
                 if (density[denIndex] > currentMax) { currentMax = density[denIndex]; }
             }
 
+            //Hlsl.InterlockedMax(maxDensity[0], currentMax);
             if (currentMax > maxDensity[0]) { maxDensity[0] = currentMax; }
         }
     }

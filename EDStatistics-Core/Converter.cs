@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using ComputeSharp;
 using Newtonsoft.Json;
 
 namespace EDStatistics_Core
@@ -56,6 +57,45 @@ namespace EDStatistics_Core
 
                 bufferWriteStream.Write(buffer, 0, bufferIndex);
             }
+        }
+
+        public static ReadOnlyBuffer<double> GetCoordinates(string binPath)
+        {
+            // Loads coordinates from a custom-format bin file into memory.
+            Console.WriteLine("Loading coordinates into memory...");
+            var systemCount = (new FileInfo(binPath)).Length / Converter.systemByteSize;
+            var coordinates = new double[systemCount * 3];
+            var sysI = 0;
+
+            var systemBufferSizeTarget = 50000;
+            using (var fileStream = new FileStream(binPath, FileMode.Open, FileAccess.Read))
+            {
+                while (systemCount > 0)
+                {
+                    var systemsToRead = systemCount < systemBufferSizeTarget ? systemCount : systemBufferSizeTarget;
+                    systemCount -= systemsToRead;
+
+                    var buffer = new byte[systemsToRead * Converter.systemByteSize];
+                    fileStream.Read(buffer, 0, (int)systemsToRead * Converter.systemByteSize);
+
+                    for (var i = 0; i < systemsToRead; i++)
+                    {
+                        var index = (i * Converter.systemByteSize) + sizeof(long);
+                        var x = BitConverter.ToDouble(buffer, index); index += sizeof(double);
+                        var y = BitConverter.ToDouble(buffer, index); index += sizeof(double);
+                        var z = BitConverter.ToDouble(buffer, index); index += sizeof(double);
+                        coordinates[sysI] = x;
+                        coordinates[sysI + 1] = y;
+                        coordinates[sysI + 2] = z;
+
+                        sysI += 3;
+                    }
+                }
+            }
+            var coordinatesBuffer = Gpu.Default.AllocateReadOnlyBuffer(coordinates);
+            Console.WriteLine("Done loading coordinates. " + (sysI / 3) + " systems loaded.");
+
+            return coordinatesBuffer;
         }
     }
 }

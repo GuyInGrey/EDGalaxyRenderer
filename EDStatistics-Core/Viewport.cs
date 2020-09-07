@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Forms;
 using Processing;
 
 namespace EDStatistics_Core
@@ -32,5 +33,35 @@ namespace EDStatistics_Core
         }
         public static double Lerp(double a, double b, double t) =>
             a * (1 - t) + b * t;
+
+        public static Viewport operator +(Viewport a, Viewport b)
+        {
+            return new Viewport(a.Top + b.Top, a.Bottom + b.Bottom, a.Right + b.Right, a.Left + b.Left);
+        }
+
+        public static Viewport operator -(Viewport a, Viewport b)
+        {
+            return new Viewport(a.Top - b.Top, a.Bottom - b.Bottom, a.Right - b.Right, a.Left - b.Left);
+        }
+
+        public static Viewport operator -(Viewport a)
+        {
+            return new Viewport(-a.Top, a.Bottom, -a.Right, -a.Left);
+        }
+
+        public static Viewport operator *(Viewport a, Viewport b)
+        {
+            return new Viewport(a.Top * b.Top, a.Bottom * b.Bottom, a.Right * b.Right, a.Left * b.Left);
+        }
+
+        public static Viewport operator *(Viewport a, double b)
+        {
+            return new Viewport(a.Top * b, a.Bottom * b, a.Right * b, a.Left * b);
+        }
+
+        public override string ToString()
+        {
+            return "(T: " + Top + ", B: " + Bottom + ", R: " + Right + ", L: " + Left + ")";
+        }
     }
 }
