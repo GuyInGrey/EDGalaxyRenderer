@@ -6,14 +6,14 @@ namespace EDStatistics_Core
 {
     public class Viewport
     {
-        public double Top;
-        public double Bottom;
-        public double Left;
-        public double Right;
+        public float Top;
+        public float Bottom;
+        public float Left;
+        public float Right;
 
         public Viewport() : this(0, 0, 0, 0) { }
 
-        public Viewport(double t, double b, double r, double l)
+        public Viewport(float t, float b, float r, float l)
         {
             Top = t;
             Bottom = b;
@@ -21,7 +21,7 @@ namespace EDStatistics_Core
             Left = l;
         }
 
-        public static Viewport Lerp(Viewport a, Viewport b, double t)
+        public static Viewport Lerp(Viewport a, Viewport b, float t)
         {
             return new Viewport()
             {
@@ -31,7 +31,7 @@ namespace EDStatistics_Core
                 Left = Lerp(a.Left, b.Left, t),
             }; 
         }
-        public static double Lerp(double a, double b, double t) =>
+        public static float Lerp(float a, float b, float t) =>
             a * (1 - t) + b * t;
 
         public static Viewport operator +(Viewport a, Viewport b)
@@ -54,7 +54,7 @@ namespace EDStatistics_Core
             return new Viewport(a.Top * b.Top, a.Bottom * b.Bottom, a.Right * b.Right, a.Left * b.Left);
         }
 
-        public static Viewport operator *(Viewport a, double b)
+        public static Viewport operator *(Viewport a, float b)
         {
             return new Viewport(a.Top * b, a.Bottom * b, a.Right * b, a.Left * b);
         }

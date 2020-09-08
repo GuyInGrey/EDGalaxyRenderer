@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace EDStatistics_Core
 {
@@ -10,5 +11,6 @@ namespace EDStatistics_Core
         public string name;
         public Coordinates coords;
         public string date;
+        public DateTime dateTime => DateTime.ParseExact(date, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
     }
 }

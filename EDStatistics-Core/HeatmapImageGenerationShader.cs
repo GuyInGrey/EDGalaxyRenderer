@@ -9,13 +9,13 @@ namespace EDStatistics_Core
         public readonly ReadWriteBuffer<int> density;
         public readonly ReadWriteBuffer<int> image;
         public readonly int width;
-        public readonly double maxDensity;
+        public readonly float maxDensity;
 
         public HeatmapImageGenerationShader(
             ReadWriteBuffer<int> density,
             ReadWriteBuffer<int> image,
             int width,
-            double maxDensity
+            float maxDensity
         ) {
             this.density = density;
             this.image = image;
@@ -36,7 +36,8 @@ namespace EDStatistics_Core
                 value = v * v * v * v * v * v * v * v * v * v * v * v * v * v * v * v * v * v * v * v * v * v * v * v;
                 value = -value + 1;
                 //value = -(Hlsl.Pow(-value, 2)) + 1; //    THIS LINE
-                image[j] = image[j + 1] = image[j + 2] = (int)(value * 255);
+                image[j] = image[j + 1] = (int)(value * 255);
+                image[j + 2] = 0;
                 image[j + 3] = 255;
             }
         }

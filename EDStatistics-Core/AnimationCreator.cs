@@ -3,12 +3,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using ComputeSharp;
+using Processing;
 
 namespace EDStatistics_Core
 {
     public static class AnimationCreator
     {
-        public static void CreateAnimation(Viewport from, Viewport to, ref ReadOnlyBuffer<double> coordinates, int imageWidth, int imageHeight)
+        public static void CreateAnimation(Viewport from, Viewport to, ref ReadOnlyBuffer<float> coordinates, int imageWidth, int imageHeight)
         {
             // Creating/handling the frames folder.
             if (Directory.Exists("frames"))
@@ -18,7 +19,7 @@ namespace EDStatistics_Core
             else { Directory.CreateDirectory("frames"); }
             Thread.Sleep(500);
 
-            var previousMaxDensity = -1d;
+            var previousMaxDensity = -1f;
 
             /// This just determines how many frames to render.
             var timeToTake = 1; // seconds
@@ -30,15 +31,15 @@ namespace EDStatistics_Core
             watch.Start();
             for (var i = 0; i < frameRate * timeToTake; i++)
             {
-                var t = i / (double)(frameRate * timeToTake);
+                var t = i / (float)(frameRate * timeToTake);
                 t = Smoothing(t);
-                var image = GalaxyRenderer.Render(
+                var image = new PSprite(imageWidth, imageHeight);
+                image.Art.SetPixels(GalaxyRenderer.Render(
                     Viewport.Lerp(from, to, t), 1000, 1000,
                     GalaxyRenderer.DefaultColorMapping,
-                    GalaxyRenderer.DefaultSmoothing,
-                    i == 0 ? (double?)null : previousMaxDensity,
+                    i == 0 ? (float?)null : previousMaxDensity,
                     out previousMaxDensity,
-                    ref coordinates);
+                    ref coordinates));
                 if (!(image is null))
                 {
                     image.Save(@"frames\" + i.ToString("000000") + ".png");
@@ -49,7 +50,7 @@ namespace EDStatistics_Core
                 #region Logging progress per frame
                 Console.WriteLine(progress + " / " + (frameRate * timeToTake) + "  -  " + ((progress * 100) / (double)(frameRate * timeToTake)).ToString("0.00") + "%");
 
-                var secondsPerFrame = (double)watch.Elapsed.TotalSeconds / progress;
+                var secondsPerFrame = watch.Elapsed.TotalSeconds / progress;
                 var framesRemaining = (frameRate * timeToTake) - progress;
                 var timeRemaining = new TimeSpan((long)(10000000 * (framesRemaining * secondsPerFrame)));
                 Console.WriteLine("Estimated time remaining: " +
@@ -73,7 +74,7 @@ namespace EDStatistics_Core
             Console.Read();
         }
 
-        public static double Sigmoid(double t) => 1f / (1f + Math.Pow(2.71828d, -t));
-        public static double Smoothing(double t) => Sigmoid((10f * t) - 5f);
+        public static float Sigmoid(float t) => (float)(1f / (1f + Math.Pow(2.71828d, -t)));
+        public static float Smoothing(float t) => Sigmoid((10f * t) - 5f);
     }
 }

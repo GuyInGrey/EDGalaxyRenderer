@@ -10,7 +10,7 @@ namespace EDStatistics_Core
 {
     class Program
     {
-        public static string BinPath => "systems-format2.bin";
+        public static string BinPath => "systems-format3.bin";
 
         // This is the total range the coordinates can be in, so we can a good idea of a default viewport.
         static Coordinates galMin = new Coordinates(-42213.81f, -29359.81f, -23405f);
@@ -18,18 +18,20 @@ namespace EDStatistics_Core
 
         static void Main(string[] args)
         {
-            if (args.Length > 0)
+            if (!File.Exists(BinPath))
             {
-                Converter.ConvertExplorationData(args[0], BinPath);
+                if (!File.Exists("systemsWithCoordinates.json"))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("No binary file was found, and no systems json file was found to convert.\n" +
+                        "Please place the systemsWithCoordinates.json in the same folder as this executable.");
+                    return;
+                }
+
+                Converter.ConvertExplorationData("systemsWithCoordinates.json", BinPath);
                 Console.WriteLine("Conversion complete.");
                 Console.Read();
                 return;
-            }
-            if (!File.Exists(BinPath)) 
-            { 
-                Console.WriteLine("No bin file found. Please build the bin file before running normally."); 
-                Console.Read(); 
-                return; 
             }
             var coords = Converter.GetCoordinates(BinPath);
             var coords2 = Gpu.Default.AllocateReadOnlyBuffer(coords);
