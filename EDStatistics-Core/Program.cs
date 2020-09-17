@@ -35,7 +35,12 @@ namespace EDStatistics_Core
             }
             var coords = Converter.GetCoordinates(BinPath);
             var coords2 = Gpu.Default.AllocateReadOnlyBuffer(coords);
-            new LiveGalaxyDisplay(ref coords2);
+
+            using (var display2 = new LiveGalaxyDisplay2())
+            {
+                display2.Run();
+            }
+            //new LiveGalaxyDisplay(ref coords2);
 
             //// For animating the frames, I lerp between viewpoints for each frame. These are the 2 keys that the lerping follows.
             //var from = new Viewport(galMax.z, galMin.z, galMax.x, galMin.x);

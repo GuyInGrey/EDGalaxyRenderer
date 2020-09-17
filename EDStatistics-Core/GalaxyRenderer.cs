@@ -83,6 +83,9 @@ namespace EDStatistics_Core
                 pixels_shader.Dispose();
                 density_shader.Dispose();
                 maxDensity_shader.Dispose();
+
+                //return new byte[width * height * 4];
+
                 //return Array.ConvertAll(data, i => (byte)i);
                 //return StructureToByteArray(data);
                 return Convert(data);
@@ -115,9 +118,16 @@ namespace EDStatistics_Core
         public static byte[] Convert(int[] data)
         {
             var result = new byte[data.Length];
-            Parallel.For(0, data.Length, i =>
+            Parallel.For(0, data.Length/16, new ParallelOptions()
             {
-                result[i] = (byte)data[i];
+                MaxDegreeOfParallelism = 4,
+            }, 
+            i =>
+            {
+                for (var j = 0; j < 16; j++)
+                {
+                    result[(i * 16) + j] = (byte)data[(i * 16) + j];
+                }
             });
             return result;
         }
